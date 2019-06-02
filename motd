@@ -1,0 +1,36 @@
+#!/bin/bash
+
+export PATH="${PATH:+$PATH:}/bin:/usr/bin:/usr/local/bin"
+
+date=`LANG=en_EN.UTF-8 date`
+load=`cat /proc/loadavg | awk '{print $1}'`
+root_usage=`df -h / | awk '/\// {print $(NF-1)}'`
+memory_usage=`LANG=en_EN.UTF-8 free -m | awk '/Mem:/ { total=$2;used=$3 } END { printf("%3.1f%%", used/total*100)}'`
+swap_usage=`LANG=en_EN.UTF-8 free -m | awk '/Swap/ { printf("%3.1f%%", "exit !$2;$3/$2*100") }'`
+users=`users | wc -w`
+time=`LANG=en_EN.UTF-8 uptime -p | sed 's/up //'`
+processes=`ps aux | wc -l`
+ip=$(ip -4 a s $(ip r | awk '/default/ { print $5 }') | awk '/inet/ { print $2 }' | head -n 1)
+public_ip=$(wget http://ipecho.net/plain -O - -q 2> /dev/null || echo "disconnected")
+packages="unavailable"
+packages_debian=$(apt list --installed 2>/dev/null | wc -l)
+packages_arch=$(pacman -Q 2>/dev/null | wc -l)
+packages_rhel=$(rpm -qa 2>/dev/null | wc -l)
+[ $packages_arch -gt 0 ] && packages=$packages_arch
+[ $packages_debian -gt 0 ] && packages=$packages_debian
+[ $packages_rhel -gt 0 ] && packages=$packages_rhel
+
+
+[ -f /etc/motd.head ] && cat /etc/motd.head || true
+printf "\n"
+printf "Welcome on %s (%s)\n" "$(hostname)" "$(uname -a)"
+printf "\n"
+printf "System information as of: %s\n" "$date"
+printf "\n"
+printf "System load:\t%s\t\tInt IP Address:\t%s %s\n" $load $ip 
+printf "Memory usage:\t%s\t\tPub IP Address:\t%s\n" $memory_usage $public_ip
+printf "Usage on /:\t%s\t\tSwap usage:\t%s\n" $root_usage $swap_usage
+printf "Local Users:\t%s\t\tProcesses:\t%s\n" $users $processes
+printf "Packages:\t%s\t\tSystem uptime:\t%s\n" "$packages" "$time"
+printf "\n"
+[ -f /etc/motd.tail ] && cat /etc/motd.tail || true
