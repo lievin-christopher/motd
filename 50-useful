@@ -27,7 +27,7 @@ printf "Welcome on %s (%s)\n" "$(hostname)" "$(uname -a)"
 printf "\n"
 printf "System information as of: %s\n" "$date"
 printf "\n"
-printf "System load:\t%s\t\tInt IP Address:\t%s %s\n" $load $ip 
+printf "System load:\t%s\t\tInt IP Address:\t%s %s\n" $load $ip
 printf "Memory usage:\t%s\t\tPub IP Address:\t%s\n" $memory_usage $public_ip
 printf "Usage on /:\t%s\t\tSwap usage:\t%s\n" $root_usage $swap_usage
 printf "Local Users:\t%s\t\tProcesses:\t%s\n" $users $processes
