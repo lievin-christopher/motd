@@ -1,0 +1,4 @@
+#!/bin/bash
+(grep -q "${HOSTNAME}" /var/tmp/hostname.last 2> /dev/null && [[ -f /var/tmp/20-hostname.last ]]) || \
+    echo "${HOSTNAME}" | tee /var/tmp/hostname.last >/dev/null && curl -o /var/tmp/20-hostname.last https://artii.herokuapp.com/make\?text\=${HOSTNAME}\&font\=doom
+cat /var/tmp/20-hostname.last
