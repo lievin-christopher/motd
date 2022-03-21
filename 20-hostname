@@ -1,4 +1,8 @@
 #!/bin/bash
-(grep -q "${HOSTNAME}" /var/tmp/hostname.last 2> /dev/null && [[ -f /var/tmp/20-hostname.last ]]) || \
-    echo "${HOSTNAME}" | tee /var/tmp/hostname.last >/dev/null && curl -o /var/tmp/20-hostname.last https://artii.herokuapp.com/make\?text\=${HOSTNAME}\&font\=doom
+(grep -q "${HOSTNAME}" /var/tmp/hostname.last 2> /dev/null && [[ -f /var/tmp/20-hostname.last ]] && [[ -s /var/tmp/20-hostname.last ]]) || \
+    echo "${HOSTNAME}" | tee /var/tmp/hostname.last >/dev/null
+    [[ $(which -- figlet) ]] && ([[ -s /usr/share/figlet/doom.flf ]] || curl -o /usr/share/figlet/doom.flf https://raw.githubusercontent.com/pwaller/pyfiglet/master/pyfiglet/fonts-contrib/doom.flf) && figlet -f doom -w 120 $(hostname) | tee /var/tmp/20-hostname.tmp >/dev/null && sed -ie /^\ *$/d /var/tmp/20-hostname.tmp && [[ -s /var/tmp/20-hostname.tmp ]] && cp /var/tmp/20-hostname.tmp /var/tmp/20-hostname.last
+    [[ ! -s /var/tmp/20-hostname.last ]] && [[ $(which -- pyfiglet) ]] && ([[ -s /usr/lib/python3/dist-packages/pyfiglet/fonts/doom.flf ]] || curl -o /usr/lib/python3/dist-packages/pyfiglet/fonts/doom.flf https://raw.githubusercontent.com/pwaller/pyfiglet/master/pyfiglet/fonts-contrib/doom.flf) && pyfiglet -f doom -w 120 $(hostname) | tee /var/tmp/20-hostname.tmp >/dev/null && sed -ie /^\ *$/d /var/tmp/20-hostname.tmp && [[ -s /var/tmp/20-hostname.tmp ]] && cp /var/tmp/20-hostname.tmp /var/tmp/20-hostname.last
+    [[ ! -s /var/tmp/20-hostname.last ]] && curl -o /var/tmp/20-hostname.tmp https://artii.herokuapp.com/make\?text\=${HOSTNAME}\&font\=doom && [[ -s /var/tmp/20-hostname.tmp ]] && cp /var/tmp/20-hostname.tmp /var/tmp/20-hostname.last
+    rm /var/tmp/20-hostname.tmp
 cat /var/tmp/20-hostname.last
