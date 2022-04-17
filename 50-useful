@@ -11,7 +11,7 @@ users=`users | wc -w`
 time=`LANG=en_EN.UTF-8 uptime -p | sed 's/up //'`
 processes=`ps aux | wc -l`
 ip=$(ip -4 a s $(ip r | awk '/default/ { print $5 }') | awk '/inet/ { print $2 }' | head -n 1)
-public_ip=$(wget http://ipecho.net/plain -O - -q 2> /dev/null || echo "disconnected")
+public_ip=$(wget --timeout=2 http://ipecho.net/plain -O - -q 2> /dev/null || echo "disconnected")
 packages="unavailable"
 packages_debian=$(apt list --installed 2>/dev/null | wc -l)
 packages_arch=$(pacman -Q 2>/dev/null | wc -l)
